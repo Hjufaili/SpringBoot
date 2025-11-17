@@ -1,5 +1,5 @@
 # Spring Boot Basics API  
-A simple Spring Boot project demonstrating basic REST API endpoints using `@RestController` and `@RequestParam`.
+A simple Spring Boot project demonstrating basic REST API endpoints using `@RestController`, `@RequestParam` and CRUD operations.
 
 ---
 
