@@ -8,31 +8,31 @@ import java.util.Map;
 public class Course {
 
     private Map<Integer, String> courses = new HashMap<>();
-    private Integer couresID = 1;
+    private Integer courseID = 1;
 
 
     @PostMapping("/create")
     public String createCourse(@RequestParam String name) {
-        courses.put(couresID, name);
-        return "Course create (name: " + name + " ID: " + couresID++ + ")";
+        courses.put(courseID, name);
+        return "Course create (name: " + name + " ID: " + courseID++ + ")";
     }
 
-    @GetMapping("getAll")
+    @GetMapping("/getAll")
     public Map<Integer, String> getAllCourses() {
         return courses;
     }
 
-    @GetMapping("getById")
+    @GetMapping("/getById")
     public String getCourseByID(@RequestParam int id) {
         return courses.getOrDefault(id, "course not found");
     }
 
-    @GetMapping("getByID/{id}")
+    @GetMapping("/getByID/{id}")
     public String getCourseById(@PathVariable int id) {
         return courses.getOrDefault(id, "course not found");
     }
 
-    @PutMapping("update")
+    @PutMapping("/update")
     public String updateCourse(@RequestParam int id, @RequestParam String name) {
         if (courses.containsKey(id)) {
             courses.put(id, name);
@@ -40,5 +40,14 @@ public class Course {
         }
         return "Course not found";
     }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteCourse(@PathVariable int id) {
+        if (courses.remove(id) != null) {
+            return "Course deleted successfully";
+        }
+        return "Course not found";
+    }
+
 
 }
