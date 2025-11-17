@@ -1,9 +1,6 @@
 package com.codeline.demo;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +23,22 @@ public class Course {
     }
 
     @GetMapping("getById")
-    public String getCourseByID(@RequestParam int id){
-        return courses.getOrDefault(id,"course not found");
+    public String getCourseByID(@RequestParam int id) {
+        return courses.getOrDefault(id, "course not found");
     }
 
     @GetMapping("getByID/{id}")
-    public String getCourseById(@PathVariable int id){
-        return courses.getOrDefault(id,"course not found");
+    public String getCourseById(@PathVariable int id) {
+        return courses.getOrDefault(id, "course not found");
+    }
+
+    @PutMapping("update")
+    public String updateCourse(@RequestParam int id, @RequestParam String name) {
+        if (courses.containsKey(id)) {
+            courses.put(id, name);
+            return "Course updated successfully";
+        }
+        return "Course not found";
     }
 
 }
