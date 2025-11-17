@@ -32,6 +32,16 @@ public class Course {
         return courses.getOrDefault(id, "course not found");
     }
 
+    @GetMapping("/getByName")
+    public String getCourseByName(@RequestParam String name) {
+        for (Map.Entry<Integer, String> entry : courses.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(name)) {
+                return "Course found: ID = " + entry.getKey() + ", Name = " + entry.getValue();
+            }
+        }
+        return "Course not found";
+    }
+
     @PutMapping("/update")
     public String updateCourse(@RequestParam int id, @RequestParam String name) {
         if (courses.containsKey(id)) {
