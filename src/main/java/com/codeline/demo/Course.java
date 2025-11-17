@@ -18,4 +18,10 @@ public class Course {
         courses.put(couresID, name);
         return "Course create (name: " + name + " ID: " + couresID++ + ")";
     }
+
+    @GetMapping("getAll")
+    public Map<Integer, String> getAllCourses() {
+        return courses;
+    }
+    
 }
