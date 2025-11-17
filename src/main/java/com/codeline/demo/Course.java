@@ -1,6 +1,7 @@
 package com.codeline.demo;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,5 +24,15 @@ public class Course {
     public Map<Integer, String> getAllCourses() {
         return courses;
     }
-    
+
+    @GetMapping("getById")
+    public String getCourseByID(@RequestParam int id){
+        return courses.getOrDefault(id,"course not found");
+    }
+
+    @GetMapping("getByID/{id}")
+    public String getCourseById(@PathVariable int id){
+        return courses.getOrDefault(id,"course not found");
+    }
+
 }
