@@ -102,6 +102,31 @@
             display: flex;
             gap: 6px;
             align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .role-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--muted);
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: transparent;
+        }
+
+        .role-switch select {
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .role-switch select:focus {
+            outline: none;
         }
 
         .theme-toggle {
@@ -496,8 +521,15 @@
                 </p>
             </div>
             <div class="header-actions">
+                <div class="role-switch">
+                    <span>Role:</span>
+                    <select id="roleSelect" onchange="handleRoleChange()">
+                        <option value="USER" selected>User</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
                 <label class="admin-toggle">
-                    <input type="checkbox" id="adminToggle" onchange="toggleAdmin()" />
+                    <input type="checkbox" id="adminToggle" onchange="toggleAdmin()" disabled />
                     <span>Admin view (show dates)</span>
                 </label>
                 <button class="theme-toggle" id="themeToggle" type="button">
@@ -569,7 +601,7 @@
             </div>
 
             <!-- Pagination -->
-            <div id="pagination" class="pagination" style="display:none;">
+            <div id="pagination" class="pagination" style="display:none%;">
                 <div>
                     Showing <span id="pageStart">0</span>–<span id="pageEnd">0</span>
                     of <span id="pageTotal">0</span> courses
@@ -649,7 +681,7 @@
                 <input type="number" id="deleteId" placeholder="e.g. 3" />
 
                 <div class="form-actions">
-                    <button class="btn-danger" onclick="deleteCourse()">🗑 Delete Course</button>
+                    <button id="deleteBtn" class="btn-danger" onclick="deleteCourse()">🗑 Delete Course</button>
                 </div>
             </div>
         </div>
@@ -667,6 +699,7 @@
     let currentPage = 1;
     const pageSize = 5; // courses per page
     let showInactiveTable = true;
+    let currentRole = "USER";
 
     const statusLabel = document.getElementById("statusLabel");
     const statusDot = document.getElementById("statusDot");
@@ -687,6 +720,7 @@
     const nextPageBtn = document.getElementById("nextPageBtn");
     const inactiveContainer = document.getElementById("inactiveContainer");
     const inactiveToggleBtn = document.getElementById("inactiveToggleBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
 
     // ---------- VIEW HANDLING ----------
     function switchView(viewId, btn) {
@@ -695,6 +729,13 @@
 
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
+
+        // If user tries to go to delete view while in USER role, block it
+        if (viewId === "view-delete" && currentRole !== "ADMIN") {
+            showToast("Only admin can access Delete page.", "error");
+            const firstTab = document.querySelector(".tab-btn[data-view='view-getall']");
+            switchView("view-getall", firstTab);
+        }
     }
 
     // ---------- THEME ----------
@@ -733,8 +774,43 @@
         updateThemeButton();
     });
 
+    // ---------- ROLE SWITCH ----------
+    function handleRoleChange() {
+        const select = document.getElementById("roleSelect");
+        currentRole = select.value;
+
+        const adminToggle = document.getElementById("adminToggle");
+
+        if (currentRole === "ADMIN") {
+            document.body.classList.add("role-admin");
+            document.body.classList.remove("role-user");
+            adminToggle.disabled = false;
+            adminToggle.checked = true;
+            document.body.classList.add("admin"); // show dates
+            deleteBtn.disabled = false;
+            showToast("Switched to Admin role. Full access enabled.", "success");
+        } else {
+            document.body.classList.add("role-user");
+            document.body.classList.remove("role-admin");
+            adminToggle.checked = false;
+            adminToggle.disabled = true;
+            document.body.classList.remove("admin"); // hide dates
+            deleteBtn.disabled = true;
+            // If currently on delete view, go back
+            if (document.getElementById("view-delete").classList.contains("active")) {
+                const firstTab = document.querySelector(".tab-btn[data-view='view-getall']");
+                switchView("view-getall", firstTab);
+            }
+            showToast("Switched to User role. Delete/restore disabled.", "success");
+        }
+
+        // re-render inactive buttons based on role
+        renderTables();
+    }
+
     // ---------- ADMIN TOGGLE ----------
     function toggleAdmin() {
+        // Only meaningful when role is ADMIN (checkbox disabled for USER)
         const cb = document.getElementById("adminToggle");
         if (cb.checked) {
             document.body.classList.add("admin");
@@ -852,13 +928,19 @@
         inactiveCourses.forEach(course => {
             const tr = document.createElement("tr");
             tr.classList.add("inactive-row");
+
+            const isAdmin = currentRole === "ADMIN";
+            const restoreBtnHtml = isAdmin
+                ? `<button class="btn-small" onclick="restoreCourse(${course.courseId})">↩ Restore</button>`
+                : `<button class="btn-small" disabled title="Only admin can restore">↩ Restore</button>`;
+
             tr.innerHTML = `
                 <td>${course.courseId}</td>
                 <td>${course.courseName}</td>
                 <td>${course.instructor}</td>
                 <td>${course.deletedAt ? formatDate(course.deletedAt) : "-"}</td>
                 <td style="text-align:center;">
-                    <button class="btn-small" onclick="restoreCourse(${course.courseId})">↩ Restore</button>
+                    ${restoreBtnHtml}
                 </td>
             `;
             inactiveTableBody.appendChild(tr);
@@ -972,6 +1054,11 @@
 
     // ---------- DELETE ----------
     async function deleteCourse() {
+        if (currentRole !== "ADMIN") {
+            showToast("Only admin can delete courses.", "error");
+            return;
+        }
+
         const id = Number(document.getElementById("deleteId").value);
         if (!id) {
             showToast("Please enter course ID.", "error");
@@ -996,6 +1083,11 @@
 
     // ---------- RESTORE ----------
     async function restoreCourse(id) {
+        if (currentRole !== "ADMIN") {
+            showToast("Only admin can restore courses.", "error");
+            return;
+        }
+
         if (!confirm(`Restore course ID ${id} to active?`)) {
             return;
         }
@@ -1016,6 +1108,7 @@
 
     // ---------- INIT ----------
     applyInitialTheme();
+    handleRoleChange(); // set initial role to USER, disable delete/restore
     fetchCourses();
 </script>
 </body>
