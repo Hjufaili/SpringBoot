@@ -13,3 +13,13 @@ This project includes simple examples for learning Spring Boot fundamentals:
 - `/random` → Random number (1–100)  
 
 Perfect for beginners learning Spring Boot REST APIs.
+
+
+## Update 
+### **Migrated Storage From HashMap to Course Object**  
+Refactored the previous implementation that used a `HashMap<Integer, Course>` and migrated it into a proper **Course object list**, following clean OOP design.
+
+### **2. Refactored All CRUD APIs**
+- Updated `Create`, `GetAll`, `GetById`, `Update`, and `Delete` methods.  
+- Improved response handling with `ResponseEntity`.  
+- Added `createdDate`, `updatedDate`, and `isActive` fields.  
