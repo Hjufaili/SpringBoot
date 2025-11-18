@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Courses Management Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --bg-soft: #020617;
+            --page-bg: radial-gradient(circle at top, #1d4ed8 0, #020617 50%);
+            --card-bg: rgba(15, 23, 42, 0.96);
+            --card-border: rgba(148, 163, 184, 0.25);
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.15);
+            --accent-hover: #0ea5e9;
+            --danger: #fca5a5;
+            --danger-bg: rgba(248, 113, 113, 0.12);
+            --success: #4ade80;
+            --success-bg: rgba(74, 222, 128, 0.12);
+            --table-header-bg: rgba(15, 23, 42, 0.9);
+            --table-header-text: #e5e7eb;
+            --chip-bg: rgba(15, 23, 42, 0.75);
+        }
+
+        body.light {
+            --bg: #f3f4f6;
+            --bg-soft: #e5e7eb;
+            --page-bg: radial-gradient(circle at top, #bfdbfe 0, #f3f4f6 55%);
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text: #0f172a;
+            --muted: #6b7280;
+            --accent: #2563eb;
+            --accent-soft: rgba(37, 99, 235, 0.08);
+            --accent-hover: #1d4ed8;
+            --danger: #b91c1c;
+            --danger-bg: #fee2e2;
+            --success: #15803d;
+            --success-bg: #dcfce7;
+            --table-header-bg: #111827;
+            --table-header-text: #f9fafb;
+            --chip-bg: #f9fafb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--page-bg);
+            background-attachment: fixed;
+            color: var(--text);
+        }
+
+        .page-shell {
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 22px 24px 26px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(18px);
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .title-block h1 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-pill {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--card-border);
+            color: var(--muted);
+        }
+
+        .subtitle {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .subtitle code {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 3px 6px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        body.light .subtitle code {
+            background: #f3f4f6;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle {
+            border-radius: 999px;
+            padding: 4px 10px;
+            border: 1px solid var(--card-border);
+            background: rgba(15, 23, 42, 0.2);
+            color: var(--text);
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        body.light .theme-toggle {
+            background: #f9fafb;
+        }
+
+        .theme-toggle span {
+            font-size: 15px;
+        }
+
+        .toolbar {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 220px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--card-border);
+            background: rgba(15, 23, 42, 0.35);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        body.light .search-input {
+            background: #f9fafb;
+        }
+
+        .search-input::placeholder {
+            color: var(--muted);
+        }
+
+        button {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            cursor: pointer;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.45);
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+        }
+
+        button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-small {
+            padding: 4px 10px;
+            font-size: 12px;
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        body.light .btn-danger {
+            box-shadow: none;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: #fef2f2;
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        .status-dot.error {
+            background: #ef4444;
+        }
+
+        .status-dot.idle {
+            background: #6b7280;
+        }
+
+        .toggle-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--card-border);
+            color: var(--muted);
+        }
+
+        body.light .toggle-chip {
+            background: #f9fafb;
+        }
+
+        .toggle-chip input {
+            accent-color: var(--accent);
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .chip {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--chip-bg);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chip-label {
+            color: var(--muted);
+        }
+
+        .chip-value {
+            font-weight: 600;
+        }
+
+        .chip-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 999px;
+        }
+
+        .chip-badge.active {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .chip-badge.inactive {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-top: 8px;
+            background: rgba(15, 23, 42, 0.45);
+        }
+
+        body.light table {
+            background: #f9fafb;
+        }
+
+        thead {
+            background: var(--table-header-bg);
+            color: var(--table-header-text);
+        }
+
+        th, td {
+            padding: 9px 10px;
+            text-align: left;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(15, 23, 42, 0.18);
+        }
+
+        body.light tbody tr:nth-child(even) {
+            background: #eef2ff;
+        }
+
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.22);
+        }
+
+        body.light tbody tr:hover {
+            background: #dbeafe;
+        }
+
+        .inactive-row {
+            opacity: 0.55;
+        }
+
+        .badge-active, .badge-inactive {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge-inactive {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .empty-state strong {
+            color: var(--text);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .form-card {
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            padding: 16px 16px 18px;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        body.light .form-card {
+            background: #ffffff;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .form-header h2 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .edit-tag {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        body.light input[type="text"] {
+            background: #f9fafb;
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--muted);
+        }
+
+        .form-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Toasts */
+        .toast-container {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 220px;
+            max-width: 320px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            background: #020617;
+            color: #f9fafb;
+            font-size: 12px;
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.8);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: toast-in 0.18s forwards, toast-out 0.3s forwards 3.1s;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .toast-icon {
+            font-size: 14px;
+            margin-top: 1px;
+        }
+
+        .toast-success {
+            border-left: 3px solid #4ade80;
+        }
+
+        .toast-error {
+            border-left: 3px solid #f97373;
+        }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toast-out {
+            from { opacity: 1; transform: translateY(0); }
+            to   { opacity: 0; transform: translateY(10px); }
+        }
+
+        @media (max-width: 600px) {
+            .page-shell {
+                padding: 16px 8px 32px;
+            }
+
+            .card {
+                padding: 18px 16px 20px;
+            }
+
+            .header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .toolbar {
+                align-items: stretch;
+            }
+
+            .toast-container {
+                left: 10px;
+                right: 10px;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+<div class="page-shell">
+    <div class="card">
+        <div class="header-row">
+            <div class="title-block">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <h1>Courses Management</h1>
+                    <span class="title-pill">Spring Boot · Localhost</span>
+                </div>
+                <p class="subtitle">
+                    Connected to <code>http://localhost:8080</code> ·
+                    <span>GET /getAll · POST /create · PUT /update · DELETE /delete/{id}</span>
+                </p>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" type="button">
+                    <span id="themeIcon">🌙</span>
+                    <span id="themeLabel">Dark Mode</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input
+                id="searchInput"
+                class="search-input"
+                type="text"
+                placeholder="🔎 Search by ID, course name, or instructor..."
+                oninput="handleSearch()" />
+
+            <div class="toggle-chip">
+                <input type="checkbox" id="showInactiveToggle" onchange="handleToggleInactive()" />
+                <span>Show inactive (deleted)</span>
+            </div>
+
+            <button id="refreshButton" onclick="fetchCourses()">
+                ⟳ Refresh
+            </button>
+
+            <div class="status-text" id="statusText">
+                <span class="status-dot idle" id="statusDot"></span>
+                <span id="statusLabel">Idle</span>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="chip">
+                <span class="chip-label">Total</span>
+                <span class="chip-value" id="totalCount">0</span>
+            </div>
+            <div class="chip">
+                <span class="chip-label">Active</span>
+                <span class="chip-value" id="activeCount">0</span>
+                <span class="chip-badge active">Visible</span>
+            </div>
+            <div class="chip">
+                <span class="chip-label">Inactive</span>
+                <span class="chip-value" id="inactiveCount">0</span>
+                <span class="chip-badge inactive">Hidden</span>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th style="width:60px;">ID</th>
+                <th>Course</th>
+                <th>Instructor</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Status</th>
+                <th style="text-align:center;width:150px;">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="coursesTableBody"></tbody>
+        </table>
+
+        <div id="emptyState" class="empty-state" style="display:none;">
+            No courses found matching your filters.<br />
+            <span>Try clearing search or clicking <strong>Refresh</strong>.</span>
+        </div>
+
+        <div class="grid">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2 id="formTitle">Create New Course</h2>
+                    <span id="editHint" class="edit-tag" style="display:none;">
+                        Editing ID <span id="editingIdLabel"></span>
+                    </span>
+                </div>
+
+                <input type="hidden" id="courseId" />
+
+                <label for="courseName">Course Name</label>
+                <input type="text" id="courseName" placeholder="e.g. Math" />
+
+                <label for="instructor">Instructor</label>
+                <input type="text" id="instructor" placeholder="e.g. Alharith" />
+
+                <div class="form-actions">
+                    <button id="submitButton" onclick="submitCourse()">+ Create Course</button>
+                    <button type="button" class="btn-small" style="display:none;" id="cancelEditButton" onclick="cancelEdit()">
+                        ✖ Cancel Edit
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2 style="margin:0 0 8px;font-size:15px;">Usage Notes</h2>
+                <ul style="margin:6px 0 0;padding-left:18px;font-size:12px;color:var(--muted);line-height:1.6;">
+                    <li>Use the search bar to find by <strong>ID</strong>, <strong>course name</strong>, or <strong>instructor</strong>.</li>
+                    <li>Inactive courses are hidden by default; enable <em>Show inactive</em> to see soft-deleted rows.</li>
+                    <li>Click <strong>Edit</strong> to load a course into the form and then <strong>Save Changes</strong>.</li>
+                    <li><strong>Delete</strong> calls <code>DELETE /delete/{id}</code> and marks the course as inactive.</li>
+                    <li>Dark/Light mode is remembered using <code>localStorage</code>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toasts -->
+<div id="toastContainer" class="toast-container"></div>
+
+<script>
+    const API = "http://localhost:8080";
+
+    let allCourses = [];
+    let showInactive = false;
+    let searchTerm = "";
+    let isEditing = false;
+
+    const statusLabel = document.getElementById("statusLabel");
+    const statusDot = document.getElementById("statusDot");
+    const tableBody = document.getElementById("coursesTableBody");
+    const emptyState = document.getElementById("emptyState");
+    const totalCountEl = document.getElementById("totalCount");
+    const activeCountEl = document.getElementById("activeCount");
+    const inactiveCountEl = document.getElementById("inactiveCount");
+    const searchInput = document.getElementById("searchInput");
+    const formTitle = document.getElementById("formTitle");
+    const editingIdLabel = document.getElementById("editingIdLabel");
+    const cancelEditButton = document.getElementById("cancelEditButton");
+    const submitButton = document.getElementById("submitButton");
+
+    // ---------- THEME ----------
+    function applyInitialTheme() {
+        const saved = localStorage.getItem("courses_theme_v2");
+        if (saved === "dark") {
+            document.body.classList.remove("light");
+            document.body.classList.add("dark");
+            document.getElementById("themeIcon").textContent = "☀️";
+            document.getElementById("themeLabel").textContent = "Light Mode";
+        } else {
+            document.body.classList.add("light");
+            document.getElementById("themeIcon").textContent = "🌙";
+            document.getElementById("themeLabel").textContent = "Dark Mode";
+        }
+    }
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light");
+        if (isLight) {
+            document.body.classList.remove("light");
+            document.body.classList.add("dark");
+            localStorage.setItem("courses_theme_v2", "dark");
+            document.getElementById("themeIcon").textContent = "☀️";
+            document.getElementById("themeLabel").textContent = "Light Mode";
+        } else {
+            document.body.classList.remove("dark");
+            document.body.classList.add("light");
+            localStorage.setItem("courses_theme_v2", "light");
+            document.getElementById("themeIcon").textContent = "🌙";
+            document.getElementById("themeLabel").textContent = "Dark Mode";
+        }
+    });
+
+    // ---------- TOAST ----------
+    function showToast(message, type = "success") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast toast-${type}`;
+        const icon = document.createElement("span");
+        icon.className = "toast-icon";
+        icon.textContent = type === "success" ? "✅" : "⚠️";
+        const text = document.createElement("span");
+        text.textContent = message;
+        toast.appendChild(icon);
+        toast.appendChild(text);
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3400);
+    }
+
+    // ---------- STATUS ----------
+    function setStatus(text, mode = "idle") {
+        statusLabel.textContent = text;
+        statusDot.classList.remove("error", "idle");
+        if (mode === "error") {
+            statusDot.classList.add("error");
+        } else if (mode === "idle") {
+            statusDot.classList.add("idle");
+        }
+    }
+
+    // ---------- FILTERS ----------
+    function applyFilters() {
+        const term = searchTerm.trim().toLowerCase();
+        return allCourses.filter(c => {
+            if (!showInactive && !c.isActive) return false;
+
+            if (term) {
+                const idStr = String(c.courseId || "").toLowerCase();
+                const name = (c.courseName || "").toLowerCase();
+                const inst = (c.instructor || "").toLowerCase();
+                return (
+                    idStr.includes(term) ||
+                    name.includes(term) ||
+                    inst.includes(term)
+                );
+            }
+            return true;
+        });
+    }
+
+    function handleSearch() {
+        searchTerm = searchInput.value;
+        renderCourses();
+        const filteredCount = applyFilters().length;
+        setStatus(
+            searchTerm
+                ? `Filtered (${filteredCount}/${allCourses.length})`
+                : `Loaded (${allCourses.length} courses)`
+        );
+    }
+
+    function handleToggleInactive() {
+        const cb = document.getElementById("showInactiveToggle");
+        showInactive = cb.checked;
+        renderCourses();
+        const filteredCount = applyFilters().length;
+        setStatus(`Showing ${filteredCount} / ${allCourses.length} courses`);
+        document.querySelector(".chip-badge.inactive").textContent = showInactive ? "Visible" : "Hidden";
+    }
+
+    // ---------- FETCH & RENDER ----------
+    async function fetchCourses() {
+        setStatus("Loading...", "idle");
+        try {
+            const res = await fetch(`${API}/getAll`);
+            if (!res.ok) throw new Error("Server error");
+            const data = await res.json();
+            allCourses = data || [];
+            renderCourses();
+            setStatus(`Loaded (${allCourses.length} courses)`, "idle");
+            showToast("Courses loaded successfully.", "success");
+        } catch (e) {
+            console.error(e);
+            setStatus("Error loading courses", "error");
+            tableBody.innerHTML = "";
+            emptyState.style.display = "block";
+            showToast("Failed to load courses. Is the backend running?", "error");
+        }
+    }
+
+    function renderCourses() {
+        const courses = applyFilters();
+        tableBody.innerHTML = "";
+
+        const total = allCourses.length;
+        const active = allCourses.filter(c => c.isActive).length;
+        const inactive = total - active;
+        totalCountEl.textContent = total;
+        activeCountEl.textContent = active;
+        inactiveCountEl.textContent = inactive;
+
+        if (!courses || courses.length === 0) {
+            emptyState.style.display = "block";
+            return;
+        }
+        emptyState.style.display = "none";
+
+        courses.forEach(course => {
+            const tr = document.createElement("tr");
+            if (!course.isActive) tr.classList.add("inactive-row");
+
+            tr.innerHTML = `
+                <td>${course.courseId}</td>
+                <td>${course.courseName}</td>
+                <td>${course.instructor}</td>
+                <td>${formatDate(course.createdDate)}</td>
+                <td>${course.updateDate ? formatDate(course.updateDate) : "-"}</td>
+                <td>
+                    <span class="${course.isActive ? "badge-active" : "badge-inactive"}">
+                        ${course.isActive ? "Active" : "Inactive"}
+                    </span>
+                </td>
+                <td style="text-align:center;">
+                    <button class="btn-small" onclick="startEdit(${course.courseId})">✏ Edit</button>
+                    <button class="btn-small btn-danger" onclick="deleteCourse(${course.courseId})">🗑 Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function formatDate(d) {
+        if (!d) return "-";
+        const date = new Date(d);
+        if (isNaN(date.getTime())) return d;
+        return date.toLocaleString();
+    }
+
+    // ---------- CREATE / UPDATE ----------
+    async function submitCourse() {
+        const id = document.getElementById("courseId").value;
+        const name = document.getElementById("courseName").value.trim();
+        const instructor = document.getElementById("instructor").value.trim();
+
+        if (!name || !instructor) {
+            showToast("Please fill all fields.", "error");
+            return;
+        }
+
+        const payload = id
+            ? { courseId: Number(id), courseName: name, instructor: instructor }
+            : { courseName: name, instructor: instructor };
+
+        try {
+            let url, method;
+            if (id) {
+                url = `${API}/update`;
+                method = "PUT";
+            } else {
+                url = `${API}/create`;
+                method = "POST";
+            }
+
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error("Request failed");
+
+            const text = await res.text();
+            showToast(text || (id ? "Course updated successfully." : "Course created successfully."), "success");
+
+            if (id) {
+                exitEditMode();
+            } else {
+                resetFormFields();
+            }
+
+            await fetchCourses();
+        } catch (e) {
+            console.error(e);
+            showToast("Error while saving course.", "error");
+        }
+    }
+
+    function startEdit(courseId) {
+        const course = allCourses.find(c => c.courseId === courseId);
+        if (!course) return;
+
+        isEditing = true;
+        document.getElementById("courseId").value = course.courseId;
+        document.getElementById("courseName").value = course.courseName;
+        document.getElementById("instructor").value = course.instructor;
+
+        formTitle.textContent = "Update Course";
+        editingIdLabel.textContent = course.courseId;
+        document.getElementById("editHint").style.display = "inline";
+        cancelEditButton.style.display = "inline-flex";
+        submitButton.textContent = "💾 Save Changes";
+    }
+
+    function cancelEdit() {
+        exitEditMode();
+        showToast("Edit cancelled.", "success");
+    }
+
+    function exitEditMode() {
+        isEditing = false;
+        document.getElementById("courseId").value = "";
+        formTitle.textContent = "Create New Course";
+        document.getElementById("editHint").style.display = "none";
+        cancelEditButton.style.display = "none";
+        submitButton.textContent = "+ Create Course";
+        resetFormFields();
+    }
+
+    function resetFormFields() {
+        document.getElementById("courseName").value = "";
+        document.getElementById("instructor").value = "";
+    }
+
+    // ---------- DELETE ----------
+    async function deleteCourse(id) {
+        const confirmDelete = confirm(`Are you sure you want to delete course ID ${id}?`);
+        if (!confirmDelete) return;
+
+        try {
+            const res = await fetch(`${API}/delete/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Delete failed");
+
+            const text = await res.text();
+            showToast(text || "Course deleted (set inactive).", "success");
+            await fetchCourses();
+        } catch (e) {
+            console.error(e);
+            showToast("Error deleting course.", "error");
+        }
+    }
+
+    // ---------- INIT ----------
+    applyInitialTheme();
+    fetchCourses();
+</script>
+</body>
+</html>
