@@ -16,7 +16,7 @@ Perfect for beginners learning Spring Boot REST APIs.
 
 
 ## Update 
-### **Migrated Storage From HashMap to Course Object**  
+### **1. Migrated Storage From HashMap to Course Object**  
 Refactored the previous implementation that used a `HashMap<Integer, Course>` and migrated it into a proper **Course object list**, following clean OOP design.
 
 ### **2. Refactored All CRUD APIs**
