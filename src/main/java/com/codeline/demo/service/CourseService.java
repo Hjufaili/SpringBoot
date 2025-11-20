@@ -3,12 +3,16 @@ package com.codeline.demo.service;
 import com.codeline.demo.controllers.CourseController;
 import com.codeline.demo.entity.Course;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
 @Service
 public class CourseService {
+
+
 
     private Map<Integer, String> courses = new HashMap<>();
     private List<Course> coursesList = new ArrayList<>();
@@ -54,30 +58,41 @@ public class CourseService {
 //        return courses;
 //    }
 
-    public Course getCourse(int id) {
+    public ResponseEntity getCourse(int id) {
         for (Course s : coursesList) {
             if (s.getCourseId() == id && s.getIsActive()) {
-                return s;
+                return ResponseEntity.ok(s);
             }
         }
-        return Course.builder().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Course not found");
+
     }
 //    public String getCourseByID(@RequestParam int id) {
 //        return courses.getOrDefault(id, "course not found");
 //    }
 
-    public String getCourseById(int id) {
-        return courses.getOrDefault(id, "course not found");
-    }
+//    public String getCourseById(int id) {
+//        return courses.getOrDefault(id, "course not found");
+//    }
 
-    public String getCourseByName(String name) {
-        for (Map.Entry<Integer, String> entry : courses.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase(name)) {
-                return "Course found: ID = " + entry.getKey() + ", Name = " + entry.getValue();
+    public ResponseEntity getCourseByCourseName(String name) {
+        for (Course course : coursesList) {
+            if (course.getCourseName().equals(name) && course.getIsActive() ) {
+                return ResponseEntity.status(HttpStatus.OK).body(course);
             }
         }
-        return "Course not found";
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Course.builder().build());
     }
+
+//    public String getCourseByName(String name) {
+//        for (Map.Entry<Integer, String> entry : courses.entrySet()) {
+//            if (entry.getValue().equalsIgnoreCase(name)) {
+//                return "Course found: ID = " + entry.getKey() + ", Name = " + entry.getValue();
+//            }
+//        }
+//        return "Course not found";
+//    }
 
     public String updateCourse(Course updateObjFromUser) {
         if (updateObjFromUser != null && updateObjFromUser.getCourseId() != null) {
