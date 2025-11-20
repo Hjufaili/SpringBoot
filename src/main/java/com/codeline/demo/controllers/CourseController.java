@@ -25,7 +25,7 @@ public class CourseController {
 
 /*    public String createCourse(@RequestParam String name) {
         courses.put(courseID, name);
-        return "Course create (name: " + name + " ID: " + courseID++ + ")";
+        return "Course create (name: "+ name + " ID: " + courseID++ + ")";
     }*/
 
     /*@PostMapping("/save")
@@ -72,7 +72,7 @@ public class CourseController {
     }
 
     @PutMapping("/update")
-    public String updateCourse(@RequestBody Course updateObjFromUser) {
+    public ResponseEntity updateCourse(@RequestBody Course updateObjFromUser) {
         return courseService.updateCourse(updateObjFromUser);
     }
 //    public String updateCourse(@RequestParam int id, @RequestParam String name) {
@@ -84,12 +84,12 @@ public class CourseController {
 //    }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteCourse(@PathVariable int id) {
+    public ResponseEntity deleteCourse(@PathVariable int id) {
         return courseService.deleteCourse(id);
     }
 
     @PutMapping("/restore/{id}")
-    public String restoreCourse(@PathVariable int id) {
+    public ResponseEntity restoreCourse(@PathVariable int id) {
         return courseService.restoreCourse(id);
 
     }
