@@ -1,8 +1,6 @@
 package com.codeline.demo.service;
 
-import com.codeline.demo.controllers.CourseController;
 import com.codeline.demo.entity.Course;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,9 +11,8 @@ import java.util.*;
 public class CourseService {
 
 
-
     private Map<Integer, String> courses = new HashMap<>();
-    private List<Course> coursesList = new ArrayList<>();
+    private final List<Course> coursesList = new ArrayList<>();
     private Integer courseID = 1;
 
 
@@ -78,11 +75,11 @@ public class CourseService {
 
     public ResponseEntity getCourseByCourseName(String name) {
         for (Course course : coursesList) {
-            if (course.getCourseName().equals(name) && course.getIsActive() ) {
+            if (course.getCourseName().equals(name) && course.getIsActive()) {
                 return ResponseEntity.status(HttpStatus.OK).body(course);
             }
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Course.builder().build());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found\n" + Course.builder().build());
     }
 
 //    public String getCourseByName(String name) {
@@ -94,7 +91,7 @@ public class CourseService {
 //        return "Course not found";
 //    }
 
-    public String updateCourse(Course updateObjFromUser) {
+    public ResponseEntity updateCourse(Course updateObjFromUser) {
         if (updateObjFromUser != null && updateObjFromUser.getCourseId() != null) {
 
             Course existingStudentToUpdate = findCourseById(updateObjFromUser.getCourseId());
@@ -107,9 +104,9 @@ public class CourseService {
 
             coursesList.add(existingStudentToUpdate);
 
-            return "Course updated successfully";
+            return ResponseEntity.ok("Course updated successfully");
         }
-        return "Course not found";
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found");
     }
 //    public String updateCourse(@RequestParam int id, @RequestParam String name) {
 //        if (courses.containsKey(id)) {
@@ -119,7 +116,7 @@ public class CourseService {
 //        return "Course not found";
 //    }
 
-    public String deleteCourse(int id) {
+    public ResponseEntity deleteCourse(int id) {
         Course existingCourseToUpdate = findCourseById(id);
 
         if (existingCourseToUpdate.getCourseId() > 0) {
@@ -132,18 +129,18 @@ public class CourseService {
 
             coursesList.add(existingCourseToUpdate);
 
-            return "Course deleted successfully (moved to inactive list)";
+            return ResponseEntity.ok("Course deleted successfully (moved to inactive list)");
         } else {
-            return "Invalid id";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid id");
         }
     }
 
-    public String restoreCourse(int id) {
+    public ResponseEntity restoreCourse(int id) {
         Course existing = findCourseById(id);
 
         // Not found (your findStudentById returns courseId = -1)
         if (existing == null || existing.getCourseId() <= 0) {
-            return "Course not found";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found");
         }
 
         // Remove old copy
@@ -157,7 +154,7 @@ public class CourseService {
         // Add back as active
         coursesList.add(existing);
 
-        return "Course restored successfully";
+        return ResponseEntity.ok("Course restored successfully");
     }
 
 
@@ -188,4 +185,12 @@ public class CourseService {
                         (now.getTime() - course.getDeletedAt().getTime()) > oneDayMillis
         );
     }
+
+    /*public Map<Integer, String> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Map<Integer, String> courses) {
+        this.courses = courses;
+    }*/
 }
