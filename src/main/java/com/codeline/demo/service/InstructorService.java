@@ -1,8 +1,10 @@
 package com.codeline.demo.service;
 
 import com.codeline.demo.entity.Course;
+import com.codeline.demo.entity.Department;
 import com.codeline.demo.entity.Instructor;
 import com.codeline.demo.repositories.CourseRepository;
+import com.codeline.demo.repositories.DepartmentRepository;
 import com.codeline.demo.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,26 @@ public class InstructorService {
     @Autowired
     InstructorRepository instructorRepository;
 
+    @Autowired
+    DepartmentRepository departmentRepository;
 
-    public Instructor createInstructor(Instructor instructor) {
+    @Autowired
+    CourseRepository courseRepository;
+
+
+
+
+
+    public Instructor createInstructor(Instructor instructor) throws Exception {
+        Department existingDepartment = departmentRepository.findById(instructor.getDepartment().getId())
+                .orElseThrow(() -> new Exception("Department not found"));
+
+        Course existingCourse = courseRepository.findById(instructor.getCourse().getId())
+                .orElseThrow(() -> new Exception("Course not found"));
+
         instructor.setIsActive(Boolean.TRUE);
+        instructor.setDepartment(existingDepartment);
+        instructor.setCourse(existingCourse);
         return instructorRepository.save(instructor);
     }
 
@@ -29,7 +48,7 @@ public class InstructorService {
 
     public Instructor getInstructorById(int id) throws Exception {
         Instructor existingInstructor = instructorRepository.findById(id)
-                .orElseThrow(() -> new Exception("Course not found"));
+                .orElseThrow(() -> new Exception("Instructor not found"));
         if (existingInstructor.getIsActive()) {
             return existingInstructor;
         } else {
