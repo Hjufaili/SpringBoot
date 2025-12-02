@@ -1,30 +1,40 @@
 package com.codeline.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Builder
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer courseId;
+    private Integer id;
+
     private String courseName;
-    private String instructor;
-    private Date createdDate;
-    private Date updateDate;
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime updatedDate;
+
     private Boolean isActive;
+
+    @OneToOne(mappedBy = "course", cascade = CascadeType.ALL)
+    private Instructor instructor;
+
+
 }
