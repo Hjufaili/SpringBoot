@@ -21,7 +21,7 @@ public class InstructorController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Instructor> createInstructor(@RequestBody Instructor requestObj) {
+    public ResponseEntity<Instructor> createInstructor (@RequestBody Instructor requestObj) throws Exception {
         Instructor instructor = instructorService.createInstructor(requestObj);
         return new ResponseEntity<>(instructor, HttpStatus.CREATED);
     }
