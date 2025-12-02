@@ -11,6 +11,7 @@ import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
+@RequestMapping("/course")
 public class CourseController {
 
     @Autowired
@@ -31,8 +32,8 @@ public class CourseController {
     }
 
 
-    @GetMapping("/getById")
-    public ResponseEntity<?> getCourse(@RequestParam int id) {
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<?> getCourseById(@PathVariable Integer id) {
         try {
             Course course = courseService.getCourseById(id);
             return new ResponseEntity<>(course, HttpStatus.OK);
@@ -41,11 +42,12 @@ public class CourseController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> updateCourse(@RequestBody Course updateObjFromUser) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateCourse(@PathVariable Integer id, @RequestBody Course updateObjFromUser) {
         try {
+            updateObjFromUser.setId(id);
             Course updatedCourse = courseService.updateCourse(updateObjFromUser);
-            return new ResponseEntity<>(updatedCourse, HttpStatus.OK); 
+            return new ResponseEntity<>(updatedCourse, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Course not found", HttpStatus.NOT_FOUND);
         }
