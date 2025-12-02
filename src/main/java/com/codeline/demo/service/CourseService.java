@@ -3,8 +3,6 @@ package com.codeline.demo.service;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.repositories.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,20 +15,20 @@ public class CourseService {
 
 
     public Course createCourse(Course course) {
-        course.setCreatedDate(new Date());
         course.setIsActive(Boolean.TRUE);
         return courseRepository.save(course);
     }
 
 
     public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+        return courseRepository.findByIsActiveTrue();
     }
 
 
     public Course getCourseById(int id) throws Exception {
-        Course existingCourse = courseRepository.findById(id).get();
-        if (existingCourse != null && existingCourse.getIsActive()) {
+        Course existingCourse = courseRepository.findById(id)
+                .orElseThrow(() -> new Exception("Course not found"));
+        if (existingCourse.getIsActive()) {
             return existingCourse;
         } else {
             throw new Exception("BAD REQUEST");
@@ -40,9 +38,11 @@ public class CourseService {
 
     public Course updateCourse(Course course) throws Exception {
 
-        Course existingCourse = courseRepository.findById(course.getCourseId()).get();
-        if (existingCourse != null && existingCourse.getIsActive()) {
-            course.setUpdateDate(new Date());
+        Course existingCourse = courseRepository.findById(course.getId())
+                .orElseThrow(() -> new Exception("Course not found"));
+        if (existingCourse.getIsActive()) {
+            course.setCreatedDate(existingCourse.getCreatedDate());
+            course.setIsActive(existingCourse.getIsActive());
             return courseRepository.save(course);
         } else {
             throw new Exception("BAD REQUEST");
@@ -50,9 +50,9 @@ public class CourseService {
     }
 
     public void deleteCourse(int id) throws Exception {
-        Course existingCourse = courseRepository.findById(id).get();
-        if (existingCourse != null && existingCourse.getIsActive()) {
-            existingCourse.setUpdateDate(new Date());
+        Course existingCourse = courseRepository.findById(id)
+                .orElseThrow(() -> new Exception("Course not found"));
+        if (existingCourse.getIsActive()) {
             existingCourse.setIsActive(Boolean.FALSE);
             courseRepository.save(existingCourse);
         } else {
