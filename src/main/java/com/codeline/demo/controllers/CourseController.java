@@ -1,7 +1,10 @@
 package com.codeline.demo.controllers;
 
+import com.codeline.demo.dto.CourseRequestDTO;
+import com.codeline.demo.dto.CourseResponseDTO;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.service.CourseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +21,27 @@ public class CourseController {
     private CourseService courseService;
 
 
+    @PostMapping("/createWithRelations")
+    public ResponseEntity<?> createCourseWithRelations(
+            @Valid @RequestBody CourseRequestDTO request) throws Exception {
+
+            CourseResponseDTO response = courseService.createCourseWithRelations(request);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<Course> createCourse(@RequestBody Course requestObj) {
+    public ResponseEntity<Course> createCourse(@Valid @RequestBody Course requestObj) {
         Course course = courseService.createCourse(requestObj);
         return new ResponseEntity<>(course, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/getAll")
-    public ResponseEntity<List<Course>> getAll() {
-        List<Course> courses = courseService.getAllCourses();
+    public ResponseEntity<List<CourseResponseDTO>> getAll() {
+        List<CourseResponseDTO> courses = courseService.getAllCoursesDTO();
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
+
 
 
     @GetMapping("/getById/{id}")
@@ -43,7 +55,8 @@ public class CourseController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable Integer id, @RequestBody Course updateObjFromUser) {
+    public ResponseEntity<?> updateCourse(@PathVariable Integer id,
+                                          @Valid @RequestBody Course updateObjFromUser) {
         try {
             updateObjFromUser.setId(id);
             Course updatedCourse = courseService.updateCourse(updateObjFromUser);
