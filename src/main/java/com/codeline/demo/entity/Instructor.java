@@ -1,6 +1,8 @@
 package com.codeline.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,15 +18,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "instructor")
 @Data
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Instructor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private String name;
+    @NotBlank(message = "Instructor name is required")
+    private String instructorName;
 
 
     @CreatedDate
@@ -34,6 +39,7 @@ public class Instructor {
     private LocalDateTime updatedDate;
 
     private Boolean isActive;
+
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
