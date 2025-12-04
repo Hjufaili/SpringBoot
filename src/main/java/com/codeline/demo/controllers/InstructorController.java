@@ -4,6 +4,7 @@ import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Instructor;
 import com.codeline.demo.service.CourseService;
 import com.codeline.demo.service.InstructorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class InstructorController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Instructor> createInstructor (@RequestBody Instructor requestObj) throws Exception {
+    public ResponseEntity<Instructor> createInstructor(@Valid @RequestBody Instructor requestObj) throws Exception {
         Instructor instructor = instructorService.createInstructor(requestObj);
         return new ResponseEntity<>(instructor, HttpStatus.CREATED);
     }
@@ -29,7 +30,7 @@ public class InstructorController {
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Instructor>> getAllInstructor() {
-        List<Instructor> instructors = instructorService.getAllCourses();
+        List<Instructor> instructors = instructorService.getAllInstructors();
         return new ResponseEntity<>(instructors, HttpStatus.OK);
     }
 
@@ -45,9 +46,9 @@ public class InstructorController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateInstructor(@PathVariable Integer id, @RequestBody Instructor updateObjFromUser) {
+    public ResponseEntity<?> updateInstructor(@PathVariable Integer id,
+                                              @Valid @RequestBody Instructor updateObjFromUser) {
         try {
-            updateObjFromUser.setId(id);
             Instructor updatedInstructor = instructorService.updateInstructor(updateObjFromUser);
             return new ResponseEntity<>(updatedInstructor, HttpStatus.OK);
         } catch (Exception e) {
