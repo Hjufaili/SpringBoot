@@ -4,12 +4,14 @@ import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Department;
 import com.codeline.demo.service.CourseService;
 import com.codeline.demo.service.DepartmentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -21,7 +23,7 @@ public class DepartmentController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Department> createDepartment(@RequestBody Department requestObj) {
+    public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department requestObj) {
         Department department = departmentService.createDepartment(requestObj);
         return new ResponseEntity<>(department, HttpStatus.CREATED);
     }
@@ -43,9 +45,20 @@ public class DepartmentController {
             return new ResponseEntity<>("Department not found", HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("/getByName")
+
+    public ResponseEntity<?> getDepartmentByName(@RequestParam String name) {
+        try {
+            Department department = departmentService.getDepartmentByName(name);
+            return new ResponseEntity<>(department, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Department not found", HttpStatus.NOT_FOUND);
+        }
+    }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateDepartment(@PathVariable Integer id, @RequestBody Department updateObjFromUser) {
+    public ResponseEntity<?> updateDepartment(@PathVariable Integer id,
+                                              @Valid @RequestBody Department updateObjFromUser) {
         try {
             updateObjFromUser.setId(id);
             Department updatedDepartment = departmentService.updateDepartment(updateObjFromUser);
