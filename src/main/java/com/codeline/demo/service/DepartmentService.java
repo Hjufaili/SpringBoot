@@ -1,8 +1,6 @@
 package com.codeline.demo.service;
 
-import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Department;
-import com.codeline.demo.repositories.CourseRepository;
 import com.codeline.demo.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,14 @@ public class DepartmentService {
             throw new Exception("BAD REQUEST");
         }
 
+    }
+
+    public Department getDepartmentByName(String name) throws Exception{
+        Department existingDepartment = departmentRepository.findByName(name);
+        if (existingDepartment == null || !Boolean.TRUE.equals(existingDepartment.getIsActive())) {
+            throw new Exception("department not found");
+        }
+        return existingDepartment;
     }
 
     public Department updateDepartment(Department department) throws Exception {
