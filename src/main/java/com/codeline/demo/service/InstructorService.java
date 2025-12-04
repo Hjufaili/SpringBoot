@@ -9,6 +9,7 @@ import com.codeline.demo.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
 
 @Service
@@ -23,8 +24,7 @@ public class InstructorService {
     @Autowired
     CourseRepository courseRepository;
 
-
-
+    private static CourseService courseService;
 
 
     public Instructor createInstructor(Instructor instructor) throws Exception {
@@ -36,12 +36,13 @@ public class InstructorService {
 
         instructor.setIsActive(Boolean.TRUE);
         instructor.setDepartment(existingDepartment);
+        existingCourse.setInstructor(instructor); // ← Critical!
         instructor.setCourse(existingCourse);
         return instructorRepository.save(instructor);
     }
 
 
-    public List<Instructor> getAllCourses() {
+    public List<Instructor> getAllInstructors() {
         return instructorRepository.findByIsActiveTrue();
     }
 
@@ -58,22 +59,22 @@ public class InstructorService {
     }
 
     public Instructor updateInstructor(Instructor instructor) throws Exception {
-
         Instructor existingInstructor = instructorRepository.findById(instructor.getId())
-                .orElseThrow(() -> new Exception("Course not found"));
-        if (existingInstructor.getIsActive()) {
-            instructor.setCreatedDate(existingInstructor.getCreatedDate());
-            instructor.setIsActive(existingInstructor.getIsActive());
-            return instructorRepository.save(instructor);
-        } else {
-            throw new Exception("BAD REQUEST");
+                .orElseThrow(() -> new Exception("Instructor not found"));
+
+        if (!Boolean.TRUE.equals(existingInstructor.getIsActive())) {
+            throw new Exception("Instructor is inactive");
         }
+
+        existingInstructor.setInstructorName(instructor.getInstructorName());
+
+        return instructorRepository.save(existingInstructor);
     }
 
     public void deleteInstructor(int id) throws Exception {
         Instructor existingInstructor = instructorRepository.findById(id)
-                .orElseThrow(() -> new Exception("Course not found"));
-        if (existingInstructor.getIsActive()) {
+                .orElseThrow(() -> new Exception("Instructor not found"));
+        if (Boolean.TRUE.equals(existingInstructor.getIsActive())){
             existingInstructor.setIsActive(Boolean.FALSE);
             instructorRepository.save(existingInstructor);
         } else {
