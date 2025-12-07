@@ -36,7 +36,7 @@ public class InstructorService {
 
         instructor.setIsActive(Boolean.TRUE);
         instructor.setDepartment(existingDepartment);
-        existingCourse.setInstructor(instructor); // ← Critical!
+        existingCourse.setInstructor(instructor);
         instructor.setCourse(existingCourse);
         return instructorRepository.save(instructor);
     }

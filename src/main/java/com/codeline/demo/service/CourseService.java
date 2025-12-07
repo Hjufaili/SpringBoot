@@ -67,7 +67,7 @@ public class CourseService {
                 .isActive(true)
                 .build();
 
-        course = courseRepository.save(course); // now course has ID
+        course = courseRepository.save(course);
 
         // 3) Handle Instructor
         CourseRequestDTO.InstructorRequest instReq = request.getInstructor();
