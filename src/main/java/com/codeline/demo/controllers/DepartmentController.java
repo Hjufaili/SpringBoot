@@ -1,5 +1,7 @@
 package com.codeline.demo.controllers;
 
+import com.codeline.demo.dto.DepartmentCreateRequest;
+import com.codeline.demo.dto.DepartmentCreateResponse;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Department;
 import com.codeline.demo.service.CourseService;
@@ -23,8 +25,10 @@ public class DepartmentController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department requestObj) {
-        Department department = departmentService.createDepartment(requestObj);
+    public ResponseEntity<?> createDepartment(
+            @RequestBody DepartmentCreateRequest requestObj) throws Exception {
+        DepartmentCreateRequest.validCreateDepartmentRequest(requestObj);
+        DepartmentCreateResponse department = departmentService.createDepartment(requestObj);
         return new ResponseEntity<>(department, HttpStatus.CREATED);
     }
 
