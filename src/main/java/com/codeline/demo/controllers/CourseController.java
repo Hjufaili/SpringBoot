@@ -1,7 +1,8 @@
 package com.codeline.demo.controllers;
 
-import com.codeline.demo.dto.CourseRequestDTO;
 import com.codeline.demo.dto.CourseResponseDTO;
+import com.codeline.demo.dto.CourseCreateRequest;
+import com.codeline.demo.dto.CourseCreateResponse;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.service.CourseService;
 import jakarta.validation.Valid;
@@ -23,17 +24,12 @@ public class CourseController {
 
     @PostMapping("/createWithRelations")
     public ResponseEntity<?> createCourseWithRelations(
-            @Valid @RequestBody CourseRequestDTO request) throws Exception {
+            @RequestBody CourseCreateRequest request) throws Exception {
+        CourseCreateRequest.validCreateCourseRequest(request);
 
-            CourseResponseDTO response = courseService.createCourseWithRelations(request);
+            CourseCreateResponse response = courseService.createCourse(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<Course> createCourse(@Valid @RequestBody Course requestObj) {
-        Course course = courseService.createCourse(requestObj);
-        return new ResponseEntity<>(course, HttpStatus.CREATED);
     }
 
     @GetMapping("/getAll")
