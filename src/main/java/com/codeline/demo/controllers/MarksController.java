@@ -1,6 +1,8 @@
 package com.codeline.demo.controllers;
 
 
+import com.codeline.demo.dto.MarksCreateRequest;
+import com.codeline.demo.dto.MarksCreateResponse;
 import com.codeline.demo.entity.Department;
 import com.codeline.demo.entity.Marks;
 import com.codeline.demo.service.DepartmentService;
@@ -23,8 +25,10 @@ public class MarksController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Marks> createMarks(@Valid @RequestBody Marks requestObj) throws Exception {
-        Marks marks = marksService.createMarks(requestObj);
+    public ResponseEntity<?> createMarks(
+            @RequestBody MarksCreateRequest requestObj) throws Exception {
+        MarksCreateRequest.validCreateMarksRequest(requestObj);
+        MarksCreateResponse marks = marksService.createMarks(requestObj);
         return new ResponseEntity<>(marks, HttpStatus.CREATED);
     }
 
