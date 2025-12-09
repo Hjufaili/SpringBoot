@@ -1,5 +1,7 @@
 package com.codeline.demo.controllers;
 
+import com.codeline.demo.dto.InstructorCreateRequest;
+import com.codeline.demo.dto.InstructorCreateResponse;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Instructor;
 import com.codeline.demo.service.CourseService;
@@ -22,9 +24,12 @@ public class InstructorController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<Instructor> createInstructor(@Valid @RequestBody Instructor requestObj) throws Exception {
-        Instructor instructor = instructorService.createInstructor(requestObj);
-        return new ResponseEntity<>(instructor, HttpStatus.CREATED);
+    public ResponseEntity<?> createInstructor(
+            @RequestBody InstructorCreateRequest requestObj) throws Exception {
+        InstructorCreateRequest.validCreateCourseRequest(requestObj);
+
+        InstructorCreateResponse response = instructorService.createInstructor(requestObj);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 
