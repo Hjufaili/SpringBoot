@@ -14,6 +14,7 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
 
     Department findByName(String name);
 
+    
     @Query("SELECT c FROM Department c WHERE c.id = :id AND c.isActive=true")
     Department findDepartmentById(Integer id);
 }
