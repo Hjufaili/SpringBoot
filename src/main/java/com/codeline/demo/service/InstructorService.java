@@ -1,8 +1,12 @@
 package com.codeline.demo.service;
 
+import com.codeline.demo.dto.InstructorCreateRequest;
+import com.codeline.demo.dto.InstructorCreateResponse;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Department;
 import com.codeline.demo.entity.Instructor;
+import com.codeline.demo.helper.Constants;
+import com.codeline.demo.helper.HelperUtils;
 import com.codeline.demo.repositories.CourseRepository;
 import com.codeline.demo.repositories.DepartmentRepository;
 import com.codeline.demo.repositories.InstructorRepository;
@@ -27,18 +31,19 @@ public class InstructorService {
     private static CourseService courseService;
 
 
-    public Instructor createInstructor(Instructor instructor) throws Exception {
-        Department existingDepartment = departmentRepository.findById(instructor.getDepartment().getId())
-                .orElseThrow(() -> new Exception("Department not found"));
-
-        Course existingCourse = courseRepository.findById(instructor.getCourse().getId())
-                .orElseThrow(() -> new Exception("Course not found"));
-
+    public InstructorCreateResponse createInstructor(InstructorCreateRequest request) throws Exception {
+        Instructor instructor = InstructorCreateRequest.convertToInstructor(request);
         instructor.setIsActive(Boolean.TRUE);
-        instructor.setDepartment(existingDepartment);
-        existingCourse.setInstructor(instructor);
-        instructor.setCourse(existingCourse);
-        return instructorRepository.save(instructor);
+
+        Department department= departmentRepository.findDepartmentById(request.getDepartmentId());
+        if (HelperUtils.isNotNull(department)){
+            instructor.setDepartment(department);
+        }else {
+            throw new Exception(Constants.INSTRUCTOR_CREATE_REQUEST_DEPARTMENT_ID_NOT_VALID);
+        }
+
+
+        return InstructorCreateResponse.convertToInstructor(instructorRepository.save(instructor));
     }
 
 
