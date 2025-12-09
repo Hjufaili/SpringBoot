@@ -27,11 +27,9 @@ public class Marks {
     private Integer id;
 
 
-    @NotBlank(message = "Student name is required")
     private String studentName;
 
-    @Min(value = 0, message = "Score must be at least 0")
-    @Max(value = 100, message = "Score cannot exceed 100")
+
     private Integer score;
 
     @CreatedDate

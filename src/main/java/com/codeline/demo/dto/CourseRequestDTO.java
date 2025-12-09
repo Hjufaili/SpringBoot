@@ -1,5 +1,7 @@
 package com.codeline.demo.dto;
 
+import com.codeline.demo.helper.Constants;
+import com.codeline.demo.helper.HelperUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +22,8 @@ public class CourseRequestDTO {
     @Valid
     private InstructorRequest instructor;
 
+
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -39,7 +43,7 @@ public class CourseRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DepartmentRequest {
-        private Integer id; // null → create new
+        private Integer id;
         @NotBlank(message = "Department name is required")
         private String name;
     }
@@ -58,4 +62,6 @@ public class CourseRequestDTO {
         @NotNull
         private Integer score;
     }
+
+
 }
