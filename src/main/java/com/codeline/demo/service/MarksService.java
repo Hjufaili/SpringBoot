@@ -1,5 +1,7 @@
 package com.codeline.demo.service;
 
+import com.codeline.demo.dto.MarksCreateRequest;
+import com.codeline.demo.dto.MarksCreateResponse;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.Department;
 import com.codeline.demo.entity.Marks;
@@ -20,21 +22,11 @@ public class MarksService {
     CourseRepository courseRepository;
 
 
-    public Marks createMarks(Marks marks) throws Exception {
-        if (marks.getCourse() == null || marks.getCourse().getId() == null) {
-            throw new Exception("Valid course is required");
-        }
+    public MarksCreateResponse createMarks(MarksCreateRequest request) throws Exception {
+        Marks marks=MarksCreateRequest.convertToMarks(request);
+        marks.setIsActive(Boolean.TRUE);
 
-        Course course = courseRepository.findById(marks.getCourse().getId())
-                .orElseThrow(() -> new Exception("Course not found"));
-
-        if (!Boolean.TRUE.equals(course.getIsActive())) {
-            throw new Exception("Course is inactive");
-        }
-
-        marks.setCourse(course);
-        marks.setIsActive(true);
-        return marksRepository.save(marks);
+        return MarksCreateResponse.convertToMarks(marksRepository.save(marks));
     }
 
 
