@@ -2,6 +2,7 @@ package com.codeline.demo.repositories;
 
 import com.codeline.demo.entity.Instructor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,4 +11,6 @@ import java.util.List;
 public interface InstructorRepository extends JpaRepository<Instructor,Integer> {
     List<Instructor> findByIsActiveTrue();
 
+    @Query("SELECT c FROM Instructor c WHERE c.id = :id AND c.isActive=true")
+     Instructor findInstructorById(Integer id);
 }
