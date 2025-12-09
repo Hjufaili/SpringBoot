@@ -1,14 +1,17 @@
 package com.codeline.demo.service;
 
-import com.codeline.demo.dto.CourseRequestDTO;
 import com.codeline.demo.dto.CourseResponseDTO;
+import com.codeline.demo.dto.CourseCreateRequest;
+import com.codeline.demo.dto.CourseCreateResponse;
 import com.codeline.demo.entity.Course;
-import com.codeline.demo.entity.Department;
 import com.codeline.demo.entity.Instructor;
 import com.codeline.demo.entity.Marks;
+import com.codeline.demo.helper.Constants;
+import com.codeline.demo.helper.HelperUtils;
 import com.codeline.demo.repositories.CourseRepository;
 import com.codeline.demo.repositories.DepartmentRepository;
 import com.codeline.demo.repositories.InstructorRepository;
+import com.codeline.demo.repositories.MarksRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +31,12 @@ public class CourseService {
     @Autowired
     InstructorRepository instructorRepository;
 
+    @Autowired
+    MarksRepository marksRepository;
 
 
-    public CourseResponseDTO createCourseWithRelations(CourseRequestDTO request) throws Exception {
+
+    /*public CourseResponseDTO createCourseWithRelations(CourseRequestDTO request) throws Exception {
 
         if (request == null || request.getCourseName() == null) {
             throw new IllegalArgumentException("Course name is required");
@@ -117,12 +123,29 @@ public class CourseService {
 
         // 5) Map to Response DTO
         return mapToResponse(savedCourse);
-    }
+    }*/
 
 
-    public Course createCourse(Course course) {
+    public CourseCreateResponse createCourse(CourseCreateRequest request) throws Exception {
+        Course course = CourseCreateRequest.convertToCourse(request);
         course.setIsActive(Boolean.TRUE);
-        return courseRepository.save(course);
+
+
+        Instructor instructor=instructorRepository.findInstructorById(request.getInstructorId());
+        if (HelperUtils.isNotNull(instructor)){
+            course.setInstructor(instructor);
+        }else {
+            throw new Exception(Constants.COURSE_CREATE_REQUEST_INSTRUCTOR_ID_NOT_VALID);
+        }
+
+        List<Marks> marks=marksRepository.findMarkById(request.getMarksId());
+        if (HelperUtils.isNotNull(marks) && HelperUtils.isListNotEmpty(marks)){
+            course.setMarks(marks);
+        }else {
+            throw new Exception(Constants.COURSE_CREATE_REQUEST_MARK_ID_NOT_VALID);
+        }
+
+        return CourseCreateResponse.convertToCourse(courseRepository.save(course));
     }
 
 
@@ -148,15 +171,6 @@ public class CourseService {
             throw new Exception("BAD REQUEST");
         }
 
-    }
-
-    public Course getCourseByName(String name) throws Exception {
-        Course existingCourse = courseRepository.findByCourseName(name);
-        if (Boolean.TRUE.equals(existingCourse.getIsActive())){
-            return existingCourse;
-        }else{
-            throw new Exception("BAD REQUEST");
-        }
     }
 
     public Course updateCourse(Course course) throws Exception {
