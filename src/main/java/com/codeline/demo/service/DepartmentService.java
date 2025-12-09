@@ -1,5 +1,7 @@
 package com.codeline.demo.service;
 
+import com.codeline.demo.dto.DepartmentCreateRequest;
+import com.codeline.demo.dto.DepartmentCreateResponse;
 import com.codeline.demo.entity.Department;
 import com.codeline.demo.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,12 @@ public class DepartmentService {
     DepartmentRepository departmentRepository;
 
 
-    public Department createDepartment(Department department) {
+    public DepartmentCreateResponse createDepartment(DepartmentCreateRequest request) {
+        Department department = DepartmentCreateRequest.convertToDepartment(request);
         department.setIsActive(Boolean.TRUE);
-        return departmentRepository.save(department);
+
+
+        return DepartmentCreateResponse.convertToDepartment(departmentRepository.save(department));
     }
 
 
