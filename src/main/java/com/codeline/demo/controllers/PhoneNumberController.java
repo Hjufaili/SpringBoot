@@ -19,11 +19,12 @@ public class PhoneNumberController {
     @Autowired
     PhoneNumberService phoneNumberService;
 
-    @PostMapping("/phoneNumbers/add")
+    @PostMapping("/student/{studentId}/phoneNumbers/add")
     public ResponseEntity<PhoneNumberCreateResponse> addPhoneNumberToStudent(
+            @PathVariable Integer studentId,
             @RequestBody PhoneNumberCreateRequest request) throws Exception {
         PhoneNumberCreateRequest.validCreatePhoneNumberRequest(request);
-        PhoneNumberCreateResponse response = phoneNumberService.addPhoneNumber(request);
+        PhoneNumberCreateResponse response = phoneNumberService.addPhoneNumber(studentId,request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
