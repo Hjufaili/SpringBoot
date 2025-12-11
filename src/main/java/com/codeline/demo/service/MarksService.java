@@ -23,7 +23,7 @@ public class MarksService {
 
 
     public MarksCreateResponse createMarks(MarksCreateRequest request) throws Exception {
-        Marks marks=MarksCreateRequest.convertToMarks(request);
+        Marks marks = MarksCreateRequest.convertToMarks(request);
         marks.setIsActive(Boolean.TRUE);
 
         return MarksCreateResponse.convertToMarks(marksRepository.save(marks));
