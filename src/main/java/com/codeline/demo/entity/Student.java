@@ -18,6 +18,7 @@ import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor
+@Table(name = "student")
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
