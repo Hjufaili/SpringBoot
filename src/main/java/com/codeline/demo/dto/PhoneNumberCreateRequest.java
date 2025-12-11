@@ -17,6 +17,7 @@ public class PhoneNumberCreateRequest {
     private String number;
     private String countryCode;
     private Boolean isLandLine;
+//    private Integer studentId;
 
     public static PhoneNumber convertToPhoneNumber(PhoneNumberCreateRequest request) {
         return PhoneNumber.builder()
@@ -33,7 +34,9 @@ public class PhoneNumberCreateRequest {
             throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_COUNTRY_CODE_NOT_VALID);
         } else if (HelperUtils.isNull(request.getIsLandLine())) {
             throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_IS_LAND_LINE_NOT_VALID);
-        }
+        } /*else if (HelperUtils.isNull(request.getStudentId()) || request.getStudentId()<=0) {
+            throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_STUDENT_ID_NOT_VALID);
+        }*/
     }
 
 }
