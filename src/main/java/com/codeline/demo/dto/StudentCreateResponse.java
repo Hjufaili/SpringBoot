@@ -18,24 +18,23 @@ public class StudentCreateResponse {
 
 
     private Integer id;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String email;
     private Date dateOfBirth;
     private String gender;
-    private List<PhoneNumber> phoneNumbers;
-    private Integer addressId;
+    private List<String> phoneNumbers;
+    /*private Integer addressId;*/
+    private AddressCreateResponse address;
 
     public static StudentCreateResponse convertToStudent(Student request){
         return StudentCreateResponse.builder()
                 .id(request.getId())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .fullName(request.getFirstName()+" "+request.getLastName())
                 .email(request.getEmail())
                 .dateOfBirth(request.getDateOfBirth())
                 .gender(request.getGender())
-                .phoneNumbers(request.getPhoneNumbers())
-                .addressId(request.getAddress().getId())
+                .phoneNumbers(request.getPhoneNumbers().stream().map(p->p.getNumber()).toList())
+                .address(AddressCreateResponse.convertToAddress(request.getAddress()))
                 .build();
     }
 }
