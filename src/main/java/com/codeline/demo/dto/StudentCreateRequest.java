@@ -1,7 +1,7 @@
 package com.codeline.demo.dto;
 
+
 import com.codeline.demo.entity.Address;
-import com.codeline.demo.entity.PhoneNumber;
 import com.codeline.demo.entity.Student;
 import com.codeline.demo.helper.Constants;
 import com.codeline.demo.helper.HelperUtils;
@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -25,8 +24,10 @@ public class StudentCreateRequest {
     private String email;
     private Date dateOfBirth;
     private String gender;
-    private List<String> phoneNumbers;
-    private Integer addressId;
+//    private List<String> phoneNumbers;
+//    private Integer addressId;
+    private List<PhoneNumberCreateRequest> phoneNumber;
+    private AddressCreateRequest address;
 
 
     public static Student convertToStudent(StudentCreateRequest request) {
@@ -50,10 +51,10 @@ public class StudentCreateRequest {
             throw new Exception(Constants.STUDENT_CREATE_REQUEST_DATE_OF_BIRTH_NOT_VALID);
         } else if (HelperUtils.isNull(request.getGender()) || request.getGender().isBlank()) {
             throw new Exception(Constants.STUDENT_CREATE_REQUEST_GENDER_NOT_VALID);
-        } else if (HelperUtils.isNull(request.getPhoneNumbers()) || request.getPhoneNumbers().isEmpty()) {
+        } else if (HelperUtils.isNull(request.getPhoneNumber()) || request.getPhoneNumber().isEmpty()) {
             throw new Exception(Constants.STUDENT_CREATE_REQUEST_PHONE_NUMBER_NOT_VALID);
-        } else if (HelperUtils.isNull(request.getAddressId()) || request.getAddressId()<=0) {
-            throw new Exception(Constants.STUDENT_CREATE_REQUEST_ADDRESS_ID_NOT_VALID);
+        } else if (HelperUtils.isNull(request.getAddress())) {
+            throw new Exception(Constants.STUDENT_CREATE_REQUEST_ADDRESS_NOT_VALID);
         }
     }
 }
