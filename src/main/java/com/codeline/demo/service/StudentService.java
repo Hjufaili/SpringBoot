@@ -1,9 +1,6 @@
 package com.codeline.demo.service;
 
-import com.codeline.demo.dto.CourseCreateResponse;
-import com.codeline.demo.dto.PhoneNumberCreateResponse;
-import com.codeline.demo.dto.StudentCreateRequest;
-import com.codeline.demo.dto.StudentCreateResponse;
+import com.codeline.demo.dto.*;
 import com.codeline.demo.entity.Address;
 import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.PhoneNumber;
@@ -35,27 +32,59 @@ public class StudentService {
 
 
     public StudentCreateResponse addStudent(StudentCreateRequest request) throws Exception {
-        Student student= StudentCreateRequest.convertToStudent(request);
+        Student student = StudentCreateRequest.convertToStudent(request);
         student.setIsActive(Boolean.TRUE);
 
-        List<PhoneNumber> phoneNumbers = phoneNumberRepository.findPhoneNumberByNumber(request.getPhoneNumbers());
+        List<PhoneNumber> phoneNumberList = new ArrayList<>();
+
+        for (PhoneNumberCreateRequest phoneNumberReq : request.getPhoneNumber()) {
+            PhoneNumber phoneNumber;
+            phoneNumber = PhoneNumber.builder()
+                    .number(phoneNumberReq.getNumber())
+                    .countryCode(phoneNumberReq.getCountryCode())
+                    .isLandLine(phoneNumberReq.getIsLandLine())
+                    .build();
+            phoneNumberList.add(phoneNumber);
+        }
+
+        student.setPhoneNumbers(phoneNumberList);
+
+
+        AddressCreateRequest addressReq = request.getAddress();
+        Address address;
+        address = Address.builder()
+                .houseNumber(addressReq.getHouseNumber())
+                .city(addressReq.getCity())
+                .country(addressReq.getCountry())
+                .stateOrProvince(addressReq.getStateOrProvince())
+                .postalCode(addressReq.getPostalCode())
+                .street(addressReq.getStreet())
+                .postalCode(addressReq.getPostalCode())
+                .build();
+
+        address.setStudent(student);
+        address = addressRepository.save(address);
+        student.setAddress(address);
+
+
+        /*List<PhoneNumber> phoneNumbers = phoneNumberRepository.findPhoneNumberByNumber(request.getPhoneNumbers());
         if (HelperUtils.isNotNull(phoneNumbers) && HelperUtils.isListNotEmpty(phoneNumbers)){
             student.setPhoneNumbers(phoneNumbers);
         }else {
             throw new Exception(Constants.STUDENT_CREATE_REQUEST_PHONE_NUMBER_NOT_VALID);
-        }
+        }*/
 
-        Address address = addressRepository.findAddressById(request.getAddressId());
+        /*Address address = addressRepository.findAddressById(request.getAddressId());
         if (HelperUtils.isNotNull(address)){
             student.setAddress(address);
         }else {
             throw new Exception(Constants.STUDENT_CREATE_REQUEST_ADDRESS_ID_NOT_VALID);
-        }
+        }*/
 
         return StudentCreateResponse.convertToStudent(studentRepository.save(student));
     }
 
-    public List<StudentCreateResponse> getAllStudents(){
+    public List<StudentCreateResponse> getAllStudents() {
         List<Student> students = studentRepository.findByIsActiveTrue();
         List<StudentCreateResponse> result = new ArrayList<>();
         for (Student c : students) {
@@ -64,7 +93,7 @@ public class StudentService {
         return result;
     }
 
-    public StudentCreateResponse getStudentById(Integer id) throws Exception{
+    public StudentCreateResponse getStudentById(Integer id) throws Exception {
         Student existingStudent = studentRepository.findById(id)
                 .orElseThrow(() -> new Exception("Student not found"));
         if (existingStudent.getIsActive()) {
@@ -74,7 +103,7 @@ public class StudentService {
         }
     }
 
-    public StudentCreateResponse updateStudent(Integer id,Student student) throws Exception {
+    public StudentCreateResponse updateStudent(Integer id, Student student) throws Exception {
         Student existingStudent = studentRepository.findStudentById(id);
         if (HelperUtils.isNotNull(existingStudent)) {
             student.setCreatedDate(existingStudent.getCreatedDate());
