@@ -17,6 +17,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "phone number")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PhoneNumber {
@@ -38,7 +39,7 @@ public class PhoneNumber {
     private Date updatedDate;
 
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "student_id")
+    @ManyToOne
+    @JoinColumn(name = "student_id" )
     private Student student;
 }
