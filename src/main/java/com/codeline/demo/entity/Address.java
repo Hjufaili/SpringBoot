@@ -15,6 +15,7 @@ import java.util.Date;
 @Entity
 @Data
 @Builder
+@Table(name ="address")
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
