@@ -19,14 +19,14 @@ public class AddressService {
     AddressRepository addressRepository;
 
 
-
-    public AddressCreateResponse createAddress (AddressCreateRequest request) throws Exception{
+    public AddressCreateResponse createAddress(AddressCreateRequest request) throws Exception {
 
         Address address = AddressCreateRequest.convertToAddress(request);
         address.setIsActive(Boolean.TRUE);
 
         return AddressCreateResponse.convertToAddress(addressRepository.save(address));
     }
+
     public AddressCreateResponse updateAddress(Integer id, Address address) throws Exception {
         Address existingAddress = addressRepository.findAddressById(id);
         if (HelperUtils.isNotNull(existingAddress)) {
