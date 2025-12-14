@@ -37,6 +37,8 @@ public class StudentCreateRequest {
                 .email(request.getEmail())
                 .dateOfBirth(request.getDateOfBirth())
                 .gender(request.getGender())
+                .address(AddressCreateRequest.convertToAddress(request.getAddress()))
+                .phoneNumbers(PhoneNumberCreateRequest.convertToPhoneNumber(request.getPhoneNumber()))
                 .build();
     }
 
