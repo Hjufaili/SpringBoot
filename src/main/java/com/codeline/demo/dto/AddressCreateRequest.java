@@ -32,17 +32,6 @@ public class AddressCreateRequest {
                 .build();
     }
 
-    public static AddressCreateRequest convertToRequest(Address address){
-
-        return AddressCreateRequest.builder()
-                .houseNumber(address.getHouseNumber())
-                .street(address.getStreet())
-                .city(address.getCity())
-                .stateOrProvince(address.getStateOrProvince())
-                .country(address.getCountry())
-                .postalCode(address.getPostalCode())
-                .build();
-    }
 
     public static void validCreateAddressRequest(AddressCreateRequest request) throws Exception{
         if(HelperUtils.isNull(request.getHouseNumber()) || request.getHouseNumber().isBlank()){
