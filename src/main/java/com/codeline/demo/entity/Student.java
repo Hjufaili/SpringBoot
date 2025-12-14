@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,10 +46,11 @@ public class Student {
     private Date updatedDate;
 
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(/*mappedBy = "student",*/ cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PhoneNumber> phoneNumbers;
 
-    @OneToOne
-    @JoinColumn(name = "address_id")
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JoinColumn(name = "address_id")
     private Address address;
 }
