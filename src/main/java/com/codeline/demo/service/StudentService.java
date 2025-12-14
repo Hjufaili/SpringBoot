@@ -2,13 +2,11 @@ package com.codeline.demo.service;
 
 import com.codeline.demo.dto.*;
 import com.codeline.demo.entity.Address;
-import com.codeline.demo.entity.Course;
 import com.codeline.demo.entity.PhoneNumber;
 import com.codeline.demo.entity.Student;
 import com.codeline.demo.helper.Constants;
 import com.codeline.demo.helper.HelperUtils;
 import com.codeline.demo.repositories.AddressRepository;
-import com.codeline.demo.repositories.PhoneNumberRepository;
 import com.codeline.demo.repositories.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,64 +22,20 @@ public class StudentService {
     @Autowired
     StudentRepository studentRepository;
 
-    @Autowired
-    PhoneNumberRepository phoneNumberRepository;
-
-    @Autowired
-    AddressRepository addressRepository;
-
-
     public StudentCreateResponse addStudent(StudentCreateRequest request) throws Exception {
         Student student = StudentCreateRequest.convertToStudent(request);
         student.setIsActive(Boolean.TRUE);
 
-        List<PhoneNumber> phoneNumberList = new ArrayList<>();
+        // valid Phone Number
+        PhoneNumberCreateRequest.validCreatePhoneNumberRequest(request.getPhoneNumber());
 
-        for (PhoneNumberCreateRequest phoneNumberReq : request.getPhoneNumber()) {
-            PhoneNumber phoneNumber;
-            phoneNumber = PhoneNumber.builder()
-                    .number(phoneNumberReq.getNumber())
-                    .countryCode(phoneNumberReq.getCountryCode())
-                    .isLandLine(phoneNumberReq.getIsLandLine())
-                    .build();
-            phoneNumberList.add(phoneNumber);
-        }
+        // valid address
+        AddressCreateRequest.validCreateAddressRequest(request.getAddress());
 
-        student.setPhoneNumbers(phoneNumberList);
-
-
-        AddressCreateRequest addressReq = request.getAddress();
-        Address address;
-        address = Address.builder()
-                .houseNumber(addressReq.getHouseNumber())
-                .city(addressReq.getCity())
-                .country(addressReq.getCountry())
-                .stateOrProvince(addressReq.getStateOrProvince())
-                .postalCode(addressReq.getPostalCode())
-                .street(addressReq.getStreet())
-                .postalCode(addressReq.getPostalCode())
-                .build();
-
-        address.setStudent(student);
-        address = addressRepository.save(address);
-        student.setAddress(address);
-
-
-        /*List<PhoneNumber> phoneNumbers = phoneNumberRepository.findPhoneNumberByNumber(request.getPhoneNumbers());
-        if (HelperUtils.isNotNull(phoneNumbers) && HelperUtils.isListNotEmpty(phoneNumbers)){
-            student.setPhoneNumbers(phoneNumbers);
-        }else {
-            throw new Exception(Constants.STUDENT_CREATE_REQUEST_PHONE_NUMBER_NOT_VALID);
-        }*/
-
-        /*Address address = addressRepository.findAddressById(request.getAddressId());
-        if (HelperUtils.isNotNull(address)){
-            student.setAddress(address);
-        }else {
-            throw new Exception(Constants.STUDENT_CREATE_REQUEST_ADDRESS_ID_NOT_VALID);
-        }*/
 
         return StudentCreateResponse.convertToStudent(studentRepository.save(student));
+
+
     }
 
     public List<StudentCreateResponse> getAllStudents() {
@@ -99,7 +53,7 @@ public class StudentService {
         if (existingStudent.getIsActive()) {
             return StudentCreateResponse.convertToStudent(existingStudent);
         } else {
-            throw new Exception("BAD REQUEST");
+            throw new Exception(Constants.BAD_REQUEST);
         }
     }
 
