@@ -40,7 +40,7 @@ public class StudentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public ResponseEntity<StudentCreateResponse> updateStudent(
             @PathVariable Integer id,
             @RequestBody StudentCreateRequest request) throws Exception {
