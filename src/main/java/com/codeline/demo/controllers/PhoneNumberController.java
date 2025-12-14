@@ -19,14 +19,14 @@ public class PhoneNumberController {
     @Autowired
     PhoneNumberService phoneNumberService;
 
-    @PostMapping("/student/{studentId}/phoneNumbers/add")
+/*    @PostMapping("/student/{studentId}/phoneNumbers/add")
     public ResponseEntity<PhoneNumberCreateResponse> addPhoneNumberToStudent(
             @PathVariable Integer studentId,
             @RequestBody PhoneNumberCreateRequest request) throws Exception {
         PhoneNumberCreateRequest.validCreatePhoneNumberRequest(request);
-        PhoneNumberCreateResponse response = phoneNumberService.addPhoneNumber(studentId,request);
+        PhoneNumberCreateResponse response = phoneNumberService.addPhoneNumberToStudent(studentId,request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
+    }*/
 
 
     @PutMapping("/update/{number}")
@@ -45,6 +45,12 @@ public class PhoneNumberController {
         phoneNumberService.deletePhoneNumber(number);
 
         return new ResponseEntity<>("DELETE "+ Constants.SUCCESS,HttpStatus.OK);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<PhoneNumberCreateResponse>> getAllPhone(){
+        List<PhoneNumberCreateResponse> responses =phoneNumberService.getAllPhoneNumber();
+        return new ResponseEntity<>(responses,HttpStatus.OK);
     }
 
 
