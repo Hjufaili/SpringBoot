@@ -38,8 +38,8 @@ public class PhoneNumber {
     @LastModifiedDate
     private Date updatedDate;
 
-
+/*
     @ManyToOne
     @JoinColumn(name = "student_id" )
-    private Student student;
+    private Student student;*/
 }
