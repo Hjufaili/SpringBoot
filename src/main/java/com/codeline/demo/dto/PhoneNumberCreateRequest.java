@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -27,16 +30,27 @@ public class PhoneNumberCreateRequest {
                 .build();
     }
 
-    public static void validCreatePhoneNumberRequest(PhoneNumberCreateRequest request) throws Exception {
-        if (HelperUtils.isNull(request.getNumber()) || request.getNumber().isBlank()){
-            throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_NUMBER_NOT_VALID);
-        } else if (HelperUtils.isNull(request.getCountryCode()) || request.getCountryCode().isBlank()) {
-            throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_COUNTRY_CODE_NOT_VALID);
-        } else if (HelperUtils.isNull(request.getIsLandLine())) {
-            throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_IS_LAND_LINE_NOT_VALID);
-        } /*else if (HelperUtils.isNull(request.getStudentId()) || request.getStudentId()<=0) {
+    public static List<PhoneNumber> convertToPhoneNumber(List<PhoneNumberCreateRequest> requestList) {
+        List<PhoneNumber> entities = new ArrayList<>();
+        for (PhoneNumberCreateRequest dto : requestList) {
+            entities.add(convertToPhoneNumber(dto));
+        }
+        return entities;
+    }
+
+    public static void validCreatePhoneNumberRequest(List<PhoneNumberCreateRequest> request) throws Exception {
+        for (PhoneNumberCreateRequest phone: request){
+            if (HelperUtils.isNull(phone.getNumber()) || phone.getNumber().isBlank()) {
+                throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_NUMBER_NOT_VALID);
+            } else if (HelperUtils.isNull(phone.getCountryCode()) || phone.getCountryCode().isBlank()) {
+                throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_COUNTRY_CODE_NOT_VALID);
+            } else if (HelperUtils.isNull(phone.getIsLandLine())) {
+                throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_IS_LAND_LINE_NOT_VALID);
+            } /*else if (HelperUtils.isNull(request.getStudentId()) || request.getStudentId()<=0) {
             throw new Exception(Constants.PHONE_NUMBER_CREATE_REQUEST_STUDENT_ID_NOT_VALID);
         }*/
+        }
+
     }
 
 }
